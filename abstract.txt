@@ -1,0 +1,342 @@
+=================================================== Inventory Management System ===================================================================
+
+=====================
+## 1. Abstract
+=====================
+
+The Inventory Management System is a Python-based application developed using Python and SQLite3 to manage the products and stock of
+a business in an organized way. The main purpose of this system is to reduce manual work and make it easier to add, update, delete, 
+search, and view product information. The system will include user authentication with Sign Up and Sign In.
+There will be two types of users: 'Admin' and 'Staff'. The Admin will have more control over the system, such as managing users, products, 
+categories, and suppliers. Staff users will mainly handle daily inventory activities such as viewing products and recording stock 
+coming in and going out. For the database, we are planning to use five related tables: 'users', 'categories', 'suppliers', 'products',
+and 'stock_transactions'. These tables are connected using primary keys and foreign keys so that the system can maintain organized and 
+related data. The 'products' table will store information about each product, such as product name, category, supplier, price, 
+available quantity, and reorder level. The 'categories' table will organize products into different categories, while the 'suppliers' table 
+will store supplier details. The 'stock_transactions' table will keep a record of stock entering or leaving the inventory and 
+which user performed the transaction.
+The system will also provide features such as low-stock checking, product searching, stock-in and stock-out management, transaction history, 
+and role-based access. The application will use a simple command-line interface.
+
+
+=========================
+# 2. Main Features
+=========================
+
+The proposed system will contain the following features:
+
+1. User Sign Up
+
+   * Allows a new Staff user to be registered.
+   * Stores user information in the 'users' table.
+
+2. User Sign In
+
+   * User enters username and password.
+   * System checks the credentials from the database.
+   * After successful login, the system identifies whether the user is an Admin or Staff.
+
+3. Role-Based Access
+
+   * Admin: Can manage users, products, categories, suppliers, and inventory.
+   * Staff: Can perform normal inventory operations such as viewing products and recording stock in/out.
+
+4. Product Management
+
+   * Add products.
+   * View products.
+   * Update products.
+   * Delete products.
+   * Search products.
+
+5. Category Management
+
+   * Add, view, update, and delete product categories.
+
+6. Supplier Management
+
+   * Store and manage supplier information.
+
+7. Stock Management
+
+   * Record stock coming into the business.
+   * Record stock going out of the business.
+   * Automatically update product quantity.
+
+8. Transaction History
+
+   * Store every stock-in and stock-out operation.
+   * Record which user performed the operation.
+
+9. Low Stock Report
+
+   * Compare current product quantity with the reorder level.
+   * Display products that need to be restocked.
+
+==================================
+# 3. Proposed Database Tables
+==================================
+
+Tables that I use in the database:
+
+1. users
+2. categories
+3. suppliers
+4. products
+5. stock_transactions
+
+====================
+# 4. Users Table
+===================
+
+The 'users' table stores the details of people who can access the system.
+
+| Attribute    | Data Type | Constraints                |
+| ------------ | --------- | -------------------------- |
+|  user_id     | INTEGER   | PRIMARY KEY, AUTOINCREMENT |
+|  username    | TEXT      | NOT NULL, UNIQUE           |
+|  password    | TEXT      | NOT NULL                   |
+|  role        | TEXT      | NOT NULL                   |
+|  email       | TEXT      | UNIQUE                     |
+
+=========================
+### Role constraint
+=========================
+
+The 'role' field will only allow:
+
+* 'Admin'
+* 'Staff'
+
+This prevents invalid roles from being stored.
+
+========================
+# 5. Categories Table
+========================
+
+The 'categories' table stores different categories of products.
+
+| Attribute       | Data Type | Constraints                |
+| --------------- | --------- | -------------------------- |
+|  category_id    | INTEGER   | PRIMARY KEY, AUTOINCREMENT |
+|  category_name  | TEXT      | NOT NULL, UNIQUE           |
+
+=========================
+# 6. Suppliers table
+=========================
+
+The 'suppliers' table stores information about the companies or people who supply products.
+
+| Attribute       | Data Type | Constraints                |
+| --------------- | --------- | -------------------------- |
+|  supplier_id    | INTEGER   | PRIMARY KEY, AUTOINCREMENT |
+|  supplier_name  | TEXT      | NOT NULL                   |
+|  phone          | TEXT      | NOT NULL                   |
+|  email          | TEXT      | UNIQUE                     |
+|  address        | TEXT      | —                          |
+
+This table allows us to know where a particular product is supplied from.
+
+=========================
+# 7. Products Table
+=========================
+
+The 'products' table is the main table for storing inventory information.
+
+| Attribute       | Data Type | Constraints                | 
+| --------------- | --------- | -------------------------- | 
+|  product_id     | INTEGER   | PRIMARY KEY, AUTOINCREMENT | 
+|  product_name   | TEXT      | NOT NULL                   | 
+|  category_id    | INTEGER   | NOT NULL, FOREIGN KEY      | 
+|  supplier_id    | INTEGER   | NOT NULL, FOREIGN KEY      | 
+|  price          | REAL      | NOT NULL, Check            | 
+|  quantity       | INTEGER   | NOT NULL, Check            | 
+
+=================================
+# 8. Stock Transactions Table
+=================================
+
+The 'stock_transactions' table records all stock-in and stock-out activities.
+
+| Attribute          | Data Type | Constraints                | 
+| ------------------ | --------- | -------------------------- | 
+|  transaction_id    | INTEGER   | PRIMARY KEY, AUTOINCREMENT | 
+|  product_id        | INTEGER   | NOT NULL, FOREIGN KEY      | 
+|  user_id           | INTEGER   | NOT NULL, FOREIGN KEY      | 
+|  transaction_type  | TEXT      | NOT NULL, CHECK            | 
+|  quantity          | INTEGER   | NOT NULL, CHECK            | 
+|  transaction_date  | TEXT      | NOT NULL                   | 
+
+
+==============================
+# 9. Database Relationships
+==============================
+
+The five tables are connected using Primary Keys and Foreign Keys.
+
+Relationship 1: Categories → Products
+
+One category can have many products.
+
+Therefore:  
+
+One Category → Many Products
+
+Relationship 2: Suppliers → Products
+
+One supplier can supply many products.
+
+Therefore:
+
+One Supplier → Many Products
+
+Relationship 3: Products → Stock Transactions
+
+One product can have many stock transactions.
+
+Therefore:
+
+One Product → Many Stock Transactions
+
+Relationship 4: Users → Stock Transactions
+
+One user can perform many stock transactions.
+
+Therefore:
+
+One User → Many Stock Transactions
+
+--------------------------------------
+# 11. Primary Keys and Foreign Keys
+--------------------------------------
+
+### Primary Key (PK)
+
+A primary key uniquely identifies each record in a table.
+
+Examples:
+
+users              → user_id
+categories         → category_id
+suppliers          → supplier_id
+products           → product_id
+stock_transactions → transaction_id
+
+### Foreign Key (FK)
+
+A foreign key connects one table with another table.
+
+In our database:
+
+products.category_id
+        ↓
+categories.category_id
+
+products.supplier_id
+        ↓
+suppliers.supplier_id
+
+stock_transactions.product_id
+        ↓
+products.product_id
+
+stock_transactions.user_id
+        ↓
+users.user_id
+
+
+# 12. User Authentication Design
+
+Authentication is used to control who can access the application. 
+
+Here we have two main authentication operations:
+
+### Sign Up
+
+A new user can register by providing details such as:
+
+Full Name
+Username
+Password
+Email
+
+The system checks whether the username already exists.
+
+For security and system control, a normal public Sign Up should create a Staff account rather than allowing anyone to choose Admin.
+
+An existing Admin can create or manage Admin accounts if needed.
+
+### Sign In
+
+The user enters:
+
+Username
+Password
+
+The program checks the 'users' table.
+
+If the credentials are correct:
+
+Login Successful
+       ↓
+Check Role
+       ↓
+Admin or Staff
+       ↓
+Show appropriate menu
+
+If the credentials are incorrect:
+
+Invalid Username or Password
+
+For the actual implementation, passwords should preferably be stored using password hashing rather than as plain text.
+
+
+# 13. Admin and Staff Roles
+
+## Admin
+
+The Admin will have greater control over the system.
+
+Example Admin menu:
+
+========== ADMIN MENU ==========
+
+1. Manage Users
+2. Manage Categories
+3. Manage Suppliers
+4. Manage Products
+5. Stock In
+6. Stock Out
+7. View Stock Transactions
+8. Search Products
+9. Low Stock Report
+10. Logout
+
+## Staff
+
+Staff will have access to normal inventory operations.
+
+Example Staff menu:
+
+========== STAFF MENU ==========
+
+1. View Products
+2. Search Products
+3. Stock In
+4. Stock Out
+5. View Stock Transactions
+6. Low Stock Report
+7. Logout
+
+This makes the application role-based, because different users get different options after logging in.
+
+# 16. Summary of Relationships
+
+| Parent Table | Child Table          | Relationship | Foreign Key                     |
+| ------------ | -------------------- | ------------ | ------------------------------- |
+| `categories` | `products`           | 1 : M        | `products.category_id`          |
+| `suppliers`  | `products`           | 1 : M        | `products.supplier_id`          |
+| `products`   | `stock_transactions` | 1 : M        | `stock_transactions.product_id` |
+| `users`      | `stock_transactions` | 1 : M        | `stock_transactions.user_id`    |
+
